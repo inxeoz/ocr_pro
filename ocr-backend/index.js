@@ -53,14 +53,18 @@ app.post("/extract-text-from-url", async (req, res) => {
     const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
     // Fetch the image from the provided URL
+    // Fetch the image from the provided URL
     const response = await fetch(imageUrl);
     if (!response.ok) {
       throw new Error(`Failed to fetch image. Status: ${response.status}`);
     }
 
-    const buffer = await response.buffer();
+    // Use arrayBuffer instead of buffer
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
     const imageBase64 = `data:image/png;base64,${buffer.toString("base64")}`;
-    
+
+
     const { data: { text } } = await Tesseract.recognize(imageBase64, "eng");
 
     res.json({ extractedText: text });
