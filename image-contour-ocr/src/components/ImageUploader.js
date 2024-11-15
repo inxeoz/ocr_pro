@@ -60,7 +60,7 @@ const ImageUploader = () => {
         formData.append("image", imageBlob, "image.jpg"); // Send the blob as an image
       }
 
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/extract-text`, {
         method: "POST",
         body: formData,
       });
