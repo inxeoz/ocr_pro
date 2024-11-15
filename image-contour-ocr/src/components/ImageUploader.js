@@ -80,6 +80,19 @@ const ImageUploader = () => {
     }
   };
 
+
+  const copyToClipboard = () => {
+    if (extractedText) {
+      navigator.clipboard.writeText(extractedText)
+        .then(() => {
+          alert('Text copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">
@@ -128,11 +141,10 @@ const ImageUploader = () => {
       <div className="mt-8 flex flex-col items-center space-y-4">
         <button
           onClick={processImage}
-          className={`px-6 py-2 text-white font-semibold rounded-lg shadow-md transition ${
-            (imageFile || imageUrl) && !isProcessing
+          className={`px-6 py-2 text-white font-semibold rounded-lg shadow-md transition ${(imageFile || imageUrl) && !isProcessing
               ? "bg-blue-600 hover:bg-blue-700"
               : "bg-gray-400 cursor-not-allowed"
-          }`}
+            }`}
           disabled={!(imageFile || imageUrl) || isProcessing}
         >
           {isProcessing ? "Processing..." : "Process Image"}
@@ -152,12 +164,20 @@ const ImageUploader = () => {
           </div>
         )}
 
-        {extractedText && (
-          <div className="p-4 bg-gray-50 border rounded-lg shadow-md">
-            <h2 className="text-lg font-bold mb-2">Extracted Text:</h2>
-            <p className="text-gray-800">{extractedText}</p>
-          </div>
-        )}
+        <div>
+          {extractedText && (
+            <div className="p-4 bg-gray-50 border rounded-lg shadow-md">
+              <h2 className="text-lg font-bold mb-2">Extracted Text:</h2>
+              <p className="text-gray-800">{extractedText}</p>
+              <button
+                onClick={copyToClipboard}
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Copy to Clipboard
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
