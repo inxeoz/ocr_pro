@@ -1,20 +1,27 @@
-const express = require("express");
-const multer = require("multer");
-const Tesseract = require("tesseract.js");
-const fetch = require("node-fetch"); // Add fetch for Node.js
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express from 'express';
+import multer from 'multer';
+import Tesseract from 'tesseract.js';
+import fetch from 'node-fetch';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 
 const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(bodyParser.json()); // Parse JSON bodies
-app.use(cors()); // Enable CORS for cross-origin requests
+app.use(bodyParser.json());
+app.use(cors());
 
 // Configure Multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
+
+// Configure Multer for file uploads
+
 
 // OCR Endpoint: Process Uploaded File
 app.post("/extract-text", upload.single("image"), async (req, res) => {
@@ -23,10 +30,7 @@ app.post("/extract-text", upload.single("image"), async (req, res) => {
       return res.status(400).json({ error: "No image uploaded." });
     }
 
-    // Convert the image buffer to Base64 format
     const imageBase64 = `data:image/png;base64,${req.file.buffer.toString("base64")}`;
-
-    // Use Tesseract.js for OCR
     const { data: { text } } = await Tesseract.recognize(imageBase64, "eng");
 
     res.json({ extractedText: text });
@@ -45,6 +49,9 @@ app.post("/extract-text-from-url", async (req, res) => {
       return res.status(400).json({ error: "No image URL provided." });
     }
 
+    // Dynamic import of node-fetch
+    const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
     // Fetch the image from the provided URL
     const response = await fetch(imageUrl);
     if (!response.ok) {
@@ -53,8 +60,7 @@ app.post("/extract-text-from-url", async (req, res) => {
 
     const buffer = await response.buffer();
     const imageBase64 = `data:image/png;base64,${buffer.toString("base64")}`;
-
-    // Use Tesseract.js for OCR
+    
     const { data: { text } } = await Tesseract.recognize(imageBase64, "eng");
 
     res.json({ extractedText: text });
