@@ -24,7 +24,7 @@ app.use(cors());
 
 
 // OCR Endpoint: Process Uploaded File
-app.post("/extract-text", upload.single("image"), async (req, res) => {
+app.get("/extract-text", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No image uploaded." });
@@ -41,7 +41,7 @@ app.post("/extract-text", upload.single("image"), async (req, res) => {
 });
 
 // OCR Endpoint: Process Image from URL
-app.post("/extract-text-from-url", async (req, res) => {
+app.get("/extract-text-from-url", async (req, res) => {
   try {
     const { imageUrl } = req.body;
 
